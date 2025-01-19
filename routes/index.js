@@ -21,7 +21,9 @@ import ChatRoutes from './ChatRoutes.js';
 import NotificationRoutes from './NotificationRoute.js';
 import PaymentRoutes from './PaymentRoutes.js';
 import RewardRoutes from './RewardRoutes.js';
+
 const router = express.Router(); router.use("/auth", AuthRoutes);
+
 router.use("/bank", BankRoutes);
 router.use("/cart", CartRoutes);
 router.use("/category", CategoryRoutes);
