@@ -5,6 +5,7 @@ import Client from "../models/Client.js";
 import Driver from "../models/Driver.js";
 import Agent from "../models/Agent.js";
 import Restaurant from "../models/Restaurant.js";
+import Ride from "../models/Ride.js";
 import SuperAdmin from "../models/SuperAdmin.js";
 import crypto from "crypto";
 import { comparePasswords, hashPassword } from "../utils/passwordUtils.js";
@@ -370,6 +371,39 @@ export const getAllUsers = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+export const getAllClients = async (req, res) => {
+  try {
+    const { dataPerPage, page } = req.body;
+
+    const limit = parseInt(dataPerPage, 10) || 10;
+    const currentPage = parseInt(page, 10) || 1;
+
+    const totalClients = await Client.countDocuments();
+
+    const totalPages = Math.ceil(totalClients / limit);
+
+    const clients = await Client.find({})
+      .skip((currentPage - 1) * limit)
+      .limit(limit);
+
+    const clientsWithRides = await Promise.all(
+      clients.map(async (client) => {
+        const rideCount = await Ride.countDocuments({ client: client._id });
+        return { ...client._doc, rides: rideCount };
+      })
+    );
+
+    return res.status(200).json({
+      clients: clientsWithRides,
+      total: totalPages,
+      currentPage,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 export const getSingleUser = async (req, res) => {
   try {
     const user = req.user;
