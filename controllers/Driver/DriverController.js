@@ -88,16 +88,15 @@ export const getDrivers = async (req, res) => {
 };
 
 export const getSingleDriver = async () => {
-  try {
-    const { id } = req.params;
-    const driver = await Driver.findById(id);
-    const bank = await Bank.findOne({ userId: driver._id });
-    const transactions = await Transaction.find({ client: driver._id });
-    const rides = await Ride.find({ driver: driver._id });
-
-    return res.status(200).json({ driver, bank, transactions, rides });
-  } catch (e) {
-    console.log(e);
-    res.status(400).json({ message: e.message });
-  }
+  // try {
+  //   const { id } = req.params;
+  //   const driver = await Driver.findById(id);
+  //   const bank = await Bank.findOne({ userId: driver._id });
+  //   const transactions = await Transaction.find({ client: driver._id });
+  //   const rides = await Ride.find({ driver: driver._id });
+  //   return res.status(200).json({ driver, bank, transactions, rides });
+  // } catch (e) {
+  //   console.log(e);
+  //   res.status(400).json({ message: e.message });
+  // }
 };
