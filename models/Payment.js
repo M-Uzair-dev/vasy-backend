@@ -22,7 +22,7 @@ const paymentSchema = new mongoose.Schema({
     },
     paymentTo: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Driver',
+        refPath: 'recipientType', // Dynamic reference to Restaurant or Driver
         required: true
     },
     status: {
@@ -30,6 +30,7 @@ const paymentSchema = new mongoose.Schema({
         enum: ['pending', 'completed', 'failed', 'refunded'],
         default: 'pending'
     },
+
     paidAt: {
         type: Date
     }
