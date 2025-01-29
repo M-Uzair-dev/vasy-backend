@@ -6,6 +6,7 @@ const clientSchema = new mongoose.Schema({
   lastName: { type: String, required: false },
   image: { type: String },
   mobileNumber: { type: String, required: true },
+  banned: { type: Boolean, default: false },
 });
 
 const Client = BaseUser.discriminator("Client", clientSchema);

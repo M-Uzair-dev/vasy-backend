@@ -15,6 +15,12 @@ const driverSchema = new mongoose.Schema({
     vehicleInsurance: { type: String, required: false },
     vehiclePhotos: [{ type: String }],
   },
+  status: {
+    type: String,
+    enum: ["pending", "approved", "rejected"],
+    required: true,
+    default: "pending",
+  },
 });
 
 const Driver = BaseUser.discriminator("Driver", driverSchema);

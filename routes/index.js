@@ -1,28 +1,28 @@
-
 import express from "express";
-import AuthRoutes from './AuthRoutes.js';
-import ClientRoutes from './ClientRoutes.js';
-import DriverRoutes from './DriverRoutes.js';
-import VehicleRoutes from './VehicleRoutes.js';
-import RulesRoutes from './Rules.js';
-import CategoryRoutes from './CategoryRoutes.js';
-import ServiceRoutes from './ServiceRoutes.js';
-import RideRoutes from './RideRoute.js';
-import DishRoutes from './DishRoutes.js';
-import OrderRoutes from './OrderRoutes.js';
-import CartRoutes from './CartRoutes.js';
-import WalletRoutes from './WalletRoutes.js';
-import RatingRoutes from './RatingRoutes.js';
-import TaxRoutes from './TaxRoutes.js';
-import ZoneRoutes from './ZoneRoutes.js';
-import RestuarantRoutes from './RestaurantRoutes.js';
-import BankRoutes from './BankRoutes.js';
-import ChatRoutes from './ChatRoutes.js';
-import NotificationRoutes from './NotificationRoute.js';
-import PaymentRoutes from './PaymentRoutes.js';
-import RewardRoutes from './RewardRoutes.js';
+import AuthRoutes from "./AuthRoutes.js";
+import ClientRoutes from "./ClientRoutes.js";
+import DriverRoutes from "./DriverRoutes.js";
+import VehicleRoutes from "./VehicleRoutes.js";
+import RulesRoutes from "./Rules.js";
+import CategoryRoutes from "./CategoryRoutes.js";
+import ServiceRoutes from "./ServiceRoutes.js";
+import RideRoutes from "./RideRoute.js";
+import DishRoutes from "./DishRoutes.js";
+import OrderRoutes from "./OrderRoutes.js";
+import CartRoutes from "./CartRoutes.js";
+import WalletRoutes from "./WalletRoutes.js";
+import RatingRoutes from "./RatingRoutes.js";
+import TaxRoutes from "./TaxRoutes.js";
+import ZoneRoutes from "./ZoneRoutes.js";
+import RestuarantRoutes from "./RestaurantRoutes.js";
+import BankRoutes from "./BankRoutes.js";
+import ChatRoutes from "./ChatRoutes.js";
+import NotificationRoutes from "./NotificationRoute.js";
+import PaymentRoutes from "./PaymentRoutes.js";
+import RewardRoutes from "./RewardRoutes.js";
+import TransactionRoutes from "./TransactionRoutes.js";
 
-const router = express.Router(); 
+const router = express.Router();
 
 router.use("/auth", AuthRoutes);
 router.use("/bank", BankRoutes);
@@ -45,4 +45,6 @@ router.use("/chat", ChatRoutes);
 router.use("/notification", NotificationRoutes);
 router.use("/payment", PaymentRoutes);
 router.use("/reward", RewardRoutes);
+router.use("/transactions", TransactionRoutes);
+
 export default router;
