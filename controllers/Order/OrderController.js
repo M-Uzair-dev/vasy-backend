@@ -20,7 +20,6 @@ export const createOrder = async (req, res) => {
     });
 
     await newOrder.save();
-    await Cart.findByIdAndDelete(cart._id);
     res.status(201).json(newOrder);
   } catch (error) {
     console.log(error);
