@@ -160,3 +160,16 @@ export const getSingleDriver = async (req, res) => {
     res.status(400).json({ message: e.message });
   }
 };
+
+export const deleteDriver = async (req, res) => {
+  const { id } = req.query;
+  try {
+    const deletedDriver = await Driver.findByIdAndDelete(id);
+    if (!deletedDriver) {
+      return res.status(404).json({ message: "Driver not found" });
+    }
+    res.status(200).json({ message: "Driver deleted successfully" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};

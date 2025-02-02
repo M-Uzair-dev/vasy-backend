@@ -1,5 +1,6 @@
 import Cart from "../../models/Cart.js";
 import Order from "../../models/Order.js";
+import Category from "../../models/Category.js";
 import mongoose from "mongoose";
 export const createOrder = async (req, res) => {
   try {
@@ -108,10 +109,20 @@ export const getSingleOrder = async (req, res) => {
     const order = await Order.findById(orderId)
       .populate("riderId")
       .populate("cartId");
+
+    const categoryId = order?.cartId?.items[0].categoryId;
+    let address;
+    if (categoryId) {
+      const category = await Category.findById(categoryId).populate(
+        "restaurantId"
+      );
+      address = category?.restaurantId?.address;
+    }
+
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
-    res.status(200).json({ order });
+    res.status(200).json({ order, address });
   } catch (error) {
     res.status(500).json({ error: "Error retrieving order" });
   }
