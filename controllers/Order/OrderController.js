@@ -105,13 +105,13 @@ export const getAllOrders = async (req, res) => {
 export const getSingleOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const order = await Order.findById(orderId).populate("riderId");
-
-    const cart = await Cart.findById(order.cartId);
+    const order = await Order.findById(orderId)
+      .populate("riderId")
+      .populate("cartId");
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
-    res.status(200).json({ cart, order });
+    res.status(200).json({ order });
   } catch (error) {
     res.status(500).json({ error: "Error retrieving order" });
   }

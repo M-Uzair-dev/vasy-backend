@@ -2,6 +2,7 @@ import Client from "../../models/Client.js";
 import Ride from "../../models/Ride.js";
 import Payment from "../../models/Payment.js";
 import Transaction from "../../models/Transactions.js";
+import Wallet from "../../models/Wallet.js";
 export const addClient = async (req, res) => {
   try {
     const client = new Client(req.body);
@@ -41,7 +42,7 @@ export const getProfile = async (req, res) => {
     const { id } = req.query;
 
     // Fetch the client
-    const client = await Client.findById(id);
+    let client = await Client.findById(id);
     if (!client) {
       return res.status(404).json({ message: "Client not found" });
     }
@@ -76,7 +77,16 @@ export const getProfile = async (req, res) => {
       };
     });
     const transactions = await Transaction.find({ client: client._id });
-    res.json({ client, rideDetails, transactions });
+
+    const wallet = await Wallet.findOne({ userId: client._id });
+    let balance;
+    if (!wallet) {
+      balance = 0;
+    } else {
+      balance = wallet.totalBalance;
+    }
+    client.balance = balance;
+    res.json({ client, rideDetails, transactions, balance });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

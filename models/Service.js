@@ -1,6 +1,7 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const serviceSchema = new mongoose.Schema({
+const serviceSchema = new mongoose.Schema(
+  {
     title: { type: String, required: true },
     kmChange: { type: Number, required: true },
     commissionType: { type: String, required: true },
@@ -9,8 +10,10 @@ const serviceSchema = new mongoose.Schema({
     tax: { type: Number, required: true },
     adminCommission: { type: Number, required: true },
     biddingSystem: { type: Boolean, required: true },
-    image: { type: String, required: true }
-}, { timestamps: true });
+    image: { type: String, required: true },
+  },
+  { timestamps: true }
+);
 
-const Service = mongoose.model('Service', serviceSchema);
+const Service = mongoose.model("Service", serviceSchema);
 export default Service;

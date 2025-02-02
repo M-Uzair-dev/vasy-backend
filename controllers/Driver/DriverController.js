@@ -3,6 +3,9 @@ import Vehicle from "../../models/Vehicle.js";
 import Ride from "../../models/Ride.js";
 import Bank from "../../models/Bank.js";
 import Transaction from "../../models/Transactions.js";
+import Payment from "../../models/Payment.js";
+import Rating from "../../models/Rating.js";
+import Wallet from "../../models/Wallet.js";
 export const addDriver = async (req, res) => {
   try {
     const newDriver = new Driver(req.body);
@@ -87,16 +90,73 @@ export const getDrivers = async (req, res) => {
   }
 };
 
-export const getSingleDriver = async () => {
-  // try {
-  //   const { id } = req.params;
-  //   const driver = await Driver.findById(id);
-  //   const bank = await Bank.findOne({ userId: driver._id });
-  //   const transactions = await Transaction.find({ client: driver._id });
-  //   const rides = await Ride.find({ driver: driver._id });
-  //   return res.status(200).json({ driver, bank, transactions, rides });
-  // } catch (e) {
-  //   console.log(e);
-  //   res.status(400).json({ message: e.message });
-  // }
+export const getSingleDriver = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const driver = await Driver.findById(id);
+    const bank = await Bank.findOne({ userId: driver._id });
+    const transactions = await Transaction.find({ client: driver._id });
+
+    const rides = await Ride.find({ driver: driver._id })
+      .select("_id driver service createdAt status")
+      .populate("service")
+      .populate("driver");
+
+    // Fetch payments corresponding to the rides
+    const rideIds = rides.map((ride) => ride._id);
+    const payments = await Payment.find({ ride: { $in: rideIds } }).select(
+      "ride paymentMethod status amount"
+    );
+
+    // Combine ride and payment data
+    const rideDetails = rides.map((ride) => {
+      const payment = payments.find(
+        (payment) => payment.ride.toString() === ride._id.toString()
+      );
+
+      return {
+        ...ride.toObject(),
+        payment: payment
+          ? {
+              paymentMethod: payment.paymentMethod,
+              status: payment.status,
+              amount: payment.amount,
+            }
+          : null, // If no payment found
+      };
+    });
+
+    const payout = await Payment.find({ paymentTo: driver._id });
+
+    const query = {
+      ratingType: "Driver",
+      entity: driver._id,
+    };
+    const ratings = await Rating.find(query).populate({
+      path: "entity",
+      select: "name",
+      model: "Driver",
+    });
+
+    const avgRating =
+      ratings.reduce((acc, curr) => acc + curr.rating, 0) / ratings.length;
+
+    const wallet = await Wallet.findOne({ userId: driver._id });
+    let balance = 0;
+    if (wallet) {
+      balance = wallet.totalBalance;
+    }
+    return res.status(200).json({
+      driver,
+      bank,
+      transactions,
+      rides: rideDetails,
+      payout,
+      avgRating,
+      balance,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({ message: e.message });
+  }
 };
