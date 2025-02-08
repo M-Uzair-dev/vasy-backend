@@ -417,3 +417,78 @@ export const getSingleUser = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
+export const getDashboardData = async (req, res) => {
+  try {
+    const totalRides = await Ride.countDocuments({});
+    const totalClients = await Client.countDocuments({});
+    const totalDrivers = await Driver.countDocuments({});
+
+    const placedRides = await Ride.countDocuments({ status: "placed" });
+    const activeRides = await Ride.countDocuments({
+      status: { $in: ["started", "placed", "accepted"] },
+    });
+    const cancelledRides = await Ride.countDocuments({ status: "cancelled" });
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+
+    // Step 1: Get Total Earnings for the Day
+    const rides = await Ride.aggregate([
+      {
+        $match: {
+          status: "completed",
+          dateAndTime: { $gte: todayStart, $lte: todayEnd },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: "$amount" },
+        },
+      },
+    ]);
+
+    const totalAmount = rides.length > 0 ? rides[0].totalAmount : 0;
+    const adminCommission = (totalAmount * 5) / 100;
+
+    // Step 2: Calculate Driver Payouts (25% per driver)
+    const payouts = await Ride.aggregate([
+      {
+        $match: {
+          status: "completed",
+          dateAndTime: { $gte: todayStart, $lte: todayEnd },
+        },
+      },
+      {
+        $group: {
+          _id: "$driver", // Group by driver
+          totalEarnings: { $sum: "$amount" }, // Sum total amount earned by each driver
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          totalEarnings: 1,
+          driverPayout: { $multiply: ["$totalEarnings", 0.25] }, // 25% payout
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      totalRides,
+      totalClients,
+      totalDrivers,
+      placedRides,
+      activeRides,
+      cancelledRides,
+      totalAmount,
+      adminCommission,
+      payouts,
+    });
+  } catch (e) {
+    return res.status(500).json({ message: "Server error" });
+  }
+};

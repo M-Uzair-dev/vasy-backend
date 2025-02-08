@@ -8,6 +8,7 @@ import {
   resetPassword,
   sendResetLink,
   updatePassword,
+  getDashboardData,
 } from "../controllers/AuthController.js";
 import { authenticateUser } from "../middleware/Auth.js";
 const router = express.Router();
@@ -20,5 +21,6 @@ router.post("/reset-password", resetPassword);
 router.put("/update-password", authenticateUser, updatePassword);
 router.get("/", getAllUsers);
 router.post("/clients", getAllClients);
+router.get("/dashboard", getDashboardData);
 
 export default router;
