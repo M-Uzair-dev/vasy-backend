@@ -21,7 +21,7 @@ export const getRules = async (req, res) => {
       if (!rule) return res.status(404).json({ message: "Rule not found" });
       return res.json({ message: "Rule retrieved successfully", rule });
     }
-    const rules = await Rule.find();
+    const rules = await Rule.find({ deleted: false });
     res.json({ message: "Rules retrieved successfully", rules });
   } catch (error) {
     res
@@ -46,12 +46,57 @@ export const updateRule = async (req, res) => {
 export const deleteRule = async (req, res) => {
   try {
     const { id } = req.query;
-    const rule = await Rule.findByIdAndDelete(id);
+    const rule = await Rule.findByIdAndUpdate(
+      id,
+      { deleted: true },
+      { new: true }
+    );
     if (!rule) return res.status(404).json({ message: "Rule not found" });
     res.status(204).json({ message: "Rule deleted successfully" });
   } catch (error) {
     res
       .status(500)
       .json({ message: "Error deleting rule", error: error.message });
+  }
+};
+export const getDeleted = async (req, res) => {
+  try {
+    const rules = await Rule.find({ deleted: true });
+    res.json({ message: "Deleted rules retrieved successfully", rules });
+  } catch (e) {
+    res
+      .status(500)
+      .json({ message: "Error deleting rule", error: error.message });
+  }
+};
+
+export const restoreRule = async (req, res) => {
+  try {
+    const { id } = req.query;
+    const rule = await Rule.findByIdAndUpdate(
+      id,
+      { deleted: false },
+      { new: true }
+    );
+    if (!rule) return res.status(404).json({ message: "Rule not found" });
+    res.status(200).json({ message: "Rule restored successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error restoring rule", error: error.message });
+  }
+};
+
+export const deleteRulePermanently = async (req, res) => {
+  try {
+    const { id } = req.query;
+    const rule = await Rule.findByIdAndDelete(id);
+    if (!rule) return res.status(404).json({ message: "Rule not found" });
+    res.status(200).json({ message: "Rule deleted permanently" });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error deleting rule permanently",
+      error: error.message,
+    });
   }
 };
