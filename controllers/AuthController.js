@@ -35,7 +35,10 @@ export const login = async (req, res) => {
     }
 
     const user = await BaseUser.findOne({ email, role });
+    const user2 = await BaseUser.findOne({ email });
+    console.log("USER2", user2);
     if (!user) {
+      console.log("USER NOT FOUND");
       return res.status(404).json({
         message: `${role[0].toUpperCase() + role.slice(1)} not found`,
       });
@@ -43,6 +46,7 @@ export const login = async (req, res) => {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+      console.log("INVALID PASSWORD");
       return res.status(400).json({ message: "Invalid password" });
     }
 
