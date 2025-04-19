@@ -9,8 +9,9 @@ const serviceSchema = new mongoose.Schema(
     weightLimit: { type: Number, required: true },
     tax: { type: Number, required: true },
     adminCommission: { type: Number, required: true },
-    biddingSystem: { type: Boolean, required: true },
+    biddingSystem: { type: Boolean, default: false },
     image: { type: String, required: true },
+    status: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

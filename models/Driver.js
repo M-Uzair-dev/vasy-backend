@@ -10,10 +10,22 @@ const driverSchema = new mongoose.Schema({
   phoneNumber: { type: String },
   dob: { type: Date, required: false },
   documents: {
-    idCard: { type: String, required: false },
+    idCardFront: { type: String, required: false },
+    idCardBack: { type: String, required: false },
     drivingLicense: { type: String, required: false },
     vehicleInsurance: { type: String, required: false },
     vehiclePhotos: [{ type: String }],
+  },
+  vehicle: {
+    model: { type: String, required: true },
+    isAC: {
+      type: String,
+      required: true,
+    },
+    numberOfPassengers: {
+      type: String,
+      required: true,
+    },
   },
   status: {
     type: String,

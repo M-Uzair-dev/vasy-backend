@@ -22,7 +22,12 @@ export const createTransaction = async (req, res) => {
 export const getTransactions = async (req, res) => {
   try {
     const clientID = req.query.id;
-    const transactions = await Transaction.find({ client: clientID });
+    let transactions;
+    if (clientID) {
+      transactions = await Transaction.find({ client: clientID });
+    } else {
+      transactions = await Transaction.find().populate("client");
+    }
     res.json(transactions);
   } catch (error) {
     res.status(400).json({ message: error.message });
