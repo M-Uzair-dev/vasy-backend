@@ -17,14 +17,14 @@ const driverSchema = new mongoose.Schema({
     vehiclePhotos: [{ type: String }],
   },
   vehicle: {
-    model: { type: String, required: true },
+    model: { type: String, default: "N/A" },
     isAC: {
       type: String,
-      required: true,
+      default: "N/A",
     },
     numberOfPassengers: {
       type: String,
-      required: true,
+      default: "N/A",
     },
   },
   status: {

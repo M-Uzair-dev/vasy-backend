@@ -84,11 +84,6 @@ export const register = async (req, res) => {
       .status(400)
       .json({ message: "Invalid date of birth format. Use YYYY-MM-DD" });
   }
-  if (CNIC && !validateCNIC(CNIC)) {
-    return res
-      .status(400)
-      .json({ message: "Invalid CNIC format. Use XXXXX-XXXXXXX-X" });
-  }
 
   try {
     let existingUser;

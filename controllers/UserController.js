@@ -94,7 +94,7 @@ const sendOTP = async (req, res) => {
 };
 const updateUser = async (req, res) => {
   try {
-    const { name, email, password, newPassword } = req.body;
+    const { name, email, password, newPassword, logo, cover, phone } = req.body;
     const userId = req.user.id;
 
     // Find the user
@@ -107,7 +107,18 @@ const updateUser = async (req, res) => {
     if (name) {
       user.name = name;
     }
-
+    if (logo) {
+      user.image = logo;
+    }
+    if (cover) {
+      user.cover = cover;
+    }
+    if (phone) {
+      user.phoneNumber = phone;
+    }
+    console.log("USER", user);
+    console.log("LOGO", logo);
+    console.log("COVER", cover);
     if (email && email !== user.email) {
       // Check if email is already taken
       const existingUser = await User.findOne({ email });
@@ -129,7 +140,7 @@ const updateUser = async (req, res) => {
       const isPasswordValid = await comparePasswords(password, user.password);
       if (!isPasswordValid) {
         return res
-          .status(401)
+          .status(202)
           .json({ message: "Current password is incorrect" });
       }
 
@@ -159,6 +170,8 @@ const getUserDetails = async (req, res) => {
       dateOfBirth: user.dateOfBirth,
       phoneNumber: user.phoneNumber,
       CNIC: user.CNIC,
+      ...user,
+      ...user?._doc,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

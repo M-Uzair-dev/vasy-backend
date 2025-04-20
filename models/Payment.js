@@ -10,7 +10,7 @@ const paymentSchema = new mongoose.Schema(
     ride: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Ride",
-      required: true,
+      required: false,
     },
     amount: {
       type: Number,
@@ -19,12 +19,13 @@ const paymentSchema = new mongoose.Schema(
     paymentMethod: {
       type: String,
       enum: ["credit", "debit", "cash", "wallet"],
-      required: true,
+      required: false,
+      default: "cash",
     },
     paymentTo: {
       type: mongoose.Schema.Types.ObjectId,
       refPath: "recipientType", // Dynamic reference to Restaurant or Driver
-      required: true,
+      required: false,
     },
     status: {
       type: String,
