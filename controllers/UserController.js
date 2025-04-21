@@ -94,9 +94,18 @@ const sendOTP = async (req, res) => {
 };
 const updateUser = async (req, res) => {
   try {
-    const { name, email, password, newPassword, logo, cover, phone } = req.body;
+    const {
+      name,
+      email,
+      password,
+      newPassword,
+      logo,
+      cover,
+      phone,
+      fullName,
+      phoneNumber,
+    } = req.body;
     const userId = req.user.id;
-
     // Find the user
     const user = await User.findById(userId);
     if (!user) {
@@ -106,6 +115,12 @@ const updateUser = async (req, res) => {
     // Update basic information
     if (name) {
       user.name = name;
+    }
+    if (fullName) {
+      user.fullName = fullName;
+    }
+    if (phoneNumber) {
+      user.phoneNumber = phoneNumber;
     }
     if (logo) {
       user.image = logo;

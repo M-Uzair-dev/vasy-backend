@@ -49,6 +49,14 @@ const rideSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
+      pickupCoordinates: {
+        type: [Number],
+        required: false,
+      },
+      dropoffCoordinates: {
+        type: [Number],
+        required: false,
+      },
     },
     dateAndTime: {
       type: Date,
