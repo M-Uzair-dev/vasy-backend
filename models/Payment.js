@@ -4,7 +4,7 @@ const paymentSchema = new mongoose.Schema(
   {
     client: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Client",
+      refPath: "recipientType", // Dynamic reference to Client or Restaurant
       required: true,
     },
     ride: {

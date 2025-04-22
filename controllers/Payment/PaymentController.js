@@ -76,23 +76,35 @@ export const getAllPayments = async (req, res) => {
     let payments;
     if (restaurantId) {
       payments = await Payment.find({ client: restaurantId })
-        .populate("client", "firstName lastName email")
+        .populate({
+          path: "client",
+          model: "BaseUser",
+          select: "firstName lastName email",
+        })
         .populate("ride", "pickupLocation dropoffLocation")
         .populate("paymentTo", "name email");
     } else {
       payments = await Payment.find()
-        .populate("client", "firstName lastName email")
+        .populate({
+          path: "client",
+          model: "BaseUser",
+          select: "firstName lastName email fullName",
+        })
         .populate("ride", "pickupLocation dropoffLocation")
         .populate("paymentTo", "name email");
     }
+    console.log(payments);
     const updatedPayments = await Promise.all(
       payments.map(async (payment) => {
         if (payment.client) {
           const bank = await Bank.findOne({ userId: payment.client._id });
+          const clientData = payment.client.toObject
+            ? payment.client.toObject()
+            : payment.client;
           return {
             ...payment.toObject(),
             client: {
-              ...payment.client.toObject(),
+              ...clientData,
               bank,
             },
           };

@@ -127,3 +127,44 @@ export const getSingleOrder = async (req, res) => {
     res.status(500).json({ error: "Error retrieving order" });
   }
 };
+export const getOrdersReport = async (req, res) => {
+  try {
+    const orders = await Order.find({})
+      .sort({ createdAt: -1 })
+      .populate("restaurantId");
+
+    // Get current date
+    const currentDate = new Date();
+
+    // Create an array of the last 6 months
+    const months = Array.from({ length: 6 }, (_, i) => {
+      const date = new Date(currentDate);
+      date.setMonth(currentDate.getMonth() - i);
+      return {
+        month: date.toLocaleString("default", { month: "long" }),
+        year: date.getFullYear(),
+        startDate: new Date(date.getFullYear(), date.getMonth(), 1),
+        endDate: new Date(date.getFullYear(), date.getMonth() + 1, 0),
+      };
+    }).reverse();
+
+    // Count orders for each month
+    const monthlyCounts = months.map(({ month, year, startDate, endDate }) => {
+      const count = orders.filter((order) => {
+        const orderDate = new Date(order.createdAt);
+        return orderDate >= startDate && orderDate <= endDate;
+      }).length;
+
+      return {
+        [`${month} ${year}`]: count,
+      };
+    });
+
+    const result = Object.assign({}, ...monthlyCounts);
+
+    res.status(200).json(result);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Error retrieving orders" });
+  }
+};

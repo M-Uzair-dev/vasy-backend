@@ -16,6 +16,7 @@ import {
 } from "../utils/validators.js";
 import { sendResetLinkforReset } from "../utils/emailUtils.js";
 import BaseUser from "../models/BaseUser.js";
+import Order from "../models/Order.js";
 
 export const login = async (req, res) => {
   const { email, password, role } = req.body;
@@ -434,6 +435,46 @@ export const getDashboardData = async (req, res) => {
     const todayEnd = new Date();
     todayEnd.setHours(23, 59, 59, 999);
 
+    // Get orders for the last 6 months
+    const orders = await Order.find({}).sort({ createdAt: -1 });
+
+    // Update createdAt to match orderDate for all orders
+    // for (const order of orders) {
+    //   if (order.orderDate) {
+    //     order.createdAt = order.orderDate;
+    //     await order.save();
+    //   }
+    // }
+
+    // Get current date
+    const currentDate = new Date();
+
+    // Create an array of the last 6 months
+    const months = Array.from({ length: 6 }, (_, i) => {
+      const date = new Date(currentDate);
+      date.setMonth(currentDate.getMonth() - i);
+      return {
+        month: date.toLocaleString("default", { month: "long" }),
+        year: date.getFullYear(),
+        startDate: new Date(date.getFullYear(), date.getMonth(), 1),
+        endDate: new Date(date.getFullYear(), date.getMonth() + 1, 0),
+      };
+    }).reverse();
+
+    // Count orders for each month
+    const monthlyCounts = months.map(({ month, year, startDate, endDate }) => {
+      const count = orders.filter((order) => {
+        const orderDate = new Date(order.createdAt);
+        return orderDate >= startDate && orderDate <= endDate;
+      }).length;
+
+      return {
+        [`${month} ${year}`]: count,
+      };
+    });
+
+    const monthlyOrders = Object.assign({}, ...monthlyCounts);
+
     // Step 1: Get Total Earnings for the Day
     const rides = await Ride.aggregate([
       {
@@ -475,7 +516,7 @@ export const getDashboardData = async (req, res) => {
         },
       },
     ]);
-
+    console.log(monthlyOrders);
     res.status(200).json({
       totalRides,
       totalClients,
@@ -486,6 +527,7 @@ export const getDashboardData = async (req, res) => {
       totalAmount,
       adminCommission,
       payouts,
+      monthlyOrders,
     });
   } catch (e) {
     return res.status(500).json({ message: "Server error" });
