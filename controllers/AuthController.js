@@ -426,9 +426,9 @@ export const getDashboardData = async (req, res) => {
 
     const placedRides = await Ride.countDocuments({ status: "placed" });
     const activeRides = await Ride.countDocuments({
-      status: { $in: ["started", "placed", "accepted"] },
+      status: { $in: ["started", "accepted"] },
     });
-    const cancelledRides = await Ride.countDocuments({ status: "cancelled" });
+    const cancelledRides = await Ride.countDocuments({ status: "rejected" });
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
 

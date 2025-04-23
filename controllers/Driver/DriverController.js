@@ -40,31 +40,38 @@ export const getDrivers = async (req, res) => {
     let drivers;
 
     if (id) {
-      drivers = await Driver.findById(id);
+      drivers = await Driver.findById(id).sort({ createdAt: -1 });
       if (!drivers) {
         return res.status(404).json({ message: "Driver not found" });
       }
     } else {
       if (pending) {
-        const totalDrivers = await Driver.countDocuments({ status: "pending" });
+        const totalDrivers = await Driver.countDocuments({
+          status: "pending",
+        }).sort({ createdAt: -1 });
         total = Math.ceil(totalDrivers / limit);
         drivers = await Driver.find({ status: "pending" })
           .skip((currentPage - 1) * limit)
-          .limit(limit);
+          .limit(limit)
+          .sort({ createdAt: -1 });
       } else if (approved) {
         const totalDrivers = await Driver.countDocuments({
           status: "approved",
-        });
+        }).sort({ createdAt: -1 });
         total = Math.ceil(totalDrivers / limit);
         drivers = await Driver.find({ status: "approved" })
           .skip((currentPage - 1) * limit)
-          .limit(limit);
+          .limit(limit)
+          .sort({ createdAt: -1 });
       } else {
-        const totalDrivers = await Driver.countDocuments();
+        const totalDrivers = await Driver.countDocuments().sort({
+          createdAt: -1,
+        });
         total = Math.ceil(totalDrivers / limit);
         drivers = await Driver.find()
           .skip((currentPage - 1) * limit)
-          .limit(limit);
+          .limit(limit)
+          .sort({ createdAt: -1 });
       }
     }
 
